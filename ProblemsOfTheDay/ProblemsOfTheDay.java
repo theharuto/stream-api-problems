@@ -43,7 +43,29 @@ public class ProblemsOfTheDay {
 //        System.out.println(reversed);
 
 
-
+        //25-Feb-26
+        /**
+         * Fibonacci numbers
+         */
+//        int a =0,b=1;
+//        System.out.println(a + " " + b);
+//        for( int i=0; i< 10; i++){
+//            int c = a + b;
+//            System.out.println(" " + c);
+//            a = b;
+//            b = c;
+//        }
+        int[] a = new int[10+2];
+        a[0] = 0;
+        a[1] = 1;
+        System.out.println(a[0] + " " + a[1]);
+//        int[] arr =
+                IntStream.range(2,10+2)
+                .map(i-> a[i]  = a[i-2] + a[i-1])
+                .forEach(System.out::println);
+//                .toArray();
+//        System.out.println(Arrays.toString(arr));
+        //a - has full numbers, while arr - has numbers except the first two
 
 
     }
