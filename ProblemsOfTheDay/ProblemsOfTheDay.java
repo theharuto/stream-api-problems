@@ -1,11 +1,11 @@
 package ProblemsOfTheDay;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class ProblemsOfTheDay {
     static void main() {
@@ -14,7 +14,7 @@ public class ProblemsOfTheDay {
         /**
          * Return the index of the vowel in a String
          */
-//        String vowel = "abcdeiouAEIOU";
+        String vowel = "abcdeiouAEIOU";
 
         //using IntStream
 //        int[] vowelIndices = IntStream.range(0, vowel.length())
@@ -22,7 +22,7 @@ public class ProblemsOfTheDay {
 //                .toArray();
 //        System.out.println(Arrays.toString(vowelIndices));
 
-        //using set
+//        using set
 //        Set<Character> set = Set.of('a','e','i','o','u','A','E','I','O');
 //        int[] vowelIndices = IntStream.range(0,vowel.length())
 //                .filter(i-> set.contains(vowel.charAt(i)))
@@ -55,17 +55,92 @@ public class ProblemsOfTheDay {
 //            a = b;
 //            b = c;
 //        }
-        int[] a = new int[10+2];
-        a[0] = 0;
-        a[1] = 1;
-        System.out.println(a[0] + " " + a[1]);
-//        int[] arr =
-                IntStream.range(2,10+2)
-                .map(i-> a[i]  = a[i-2] + a[i-1])
-                .forEach(System.out::println);
+//        int[] a = new int[10+2];
+//        a[0] = 0;
+//        a[1] = 1;
+//        System.out.println(a[0] + " " + a[1]);
+////        int[] arr =
+//                IntStream.range(2,10+2)
+//                .map(i-> a[i]  = a[i-2] + a[i-1])
+//                .forEach(System.out::println);
 //                .toArray();
 //        System.out.println(Arrays.toString(arr));
         //a - has full numbers, while arr - has numbers except the first two
+
+
+        //26-Feb-26
+//        record Employee(String name, String dept, long salary){}
+//        List<Employee> employees = List.of(
+//                new Employee("Alice", "IT", 70000),
+//                new Employee("Bob", "IT", 40000),
+//                new Employee("Charlie", "HR", 60000),
+//                new Employee("David", "HR", 45000),
+//                new Employee("Eve", "IT", 90000)
+//        );
+        /**
+         * Group employees by department.
+         *
+         * For each department:
+         *
+         * Keep only employees earning more than 50,000
+         *
+         * Convert names to uppercase
+         *
+         * Sort names alphabetically
+         *
+         * Return result as:
+         *
+         * Map<String, List<String>>
+         *
+         * expected
+         * {
+         *   "IT" = ["ALICE", "EVE"],
+         *   "HR" = ["CHARLIE"]
+         * }
+         */
+//       Map<String, List<String>> deptEmployeeName = employees.stream().filter(employee -> employee.salary() > 50_000)
+//                .collect(Collectors.groupingBy(Employee::dept, Collectors.collectingAndThen(
+//                        Collectors.toList(),
+//                        list -> { return
+//                            list.stream().map(e->e.name().toUpperCase())
+//                                    .sorted()
+//                                    .toList();
+//                        }
+//                )));
+//        System.out.println(deptEmployeeName);
+
+
+
+
+        String text = "Java is great and Java is powerful. Java streams are great and powerful!";
+        /**
+         * Using Streams:
+         *
+         * Ignore case
+         *
+         * Remove punctuation
+         *
+         * Count frequency of each word
+         *
+         * Return the top 3 most frequent words sorted by:
+         *
+         * frequency (descending)
+         *
+         * then alphabetically (ascending)
+         *
+         * expected output
+         * ["java", "and", "great"]
+         */
+        Stream.of(text.split("\\s+"))
+                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new,Collectors.counting()
+                ))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String,Long>comparingByValue(Comparator.reverseOrder()).thenComparing(Map.Entry::getKey))
+                .limit(3)
+                .map(Map.Entry::getKey)
+                .forEach(System.out::println);
+
+
 
 
     }
