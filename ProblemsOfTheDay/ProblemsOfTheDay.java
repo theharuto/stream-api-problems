@@ -1,6 +1,7 @@
 package ProblemsOfTheDay;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -143,6 +144,38 @@ public class ProblemsOfTheDay {
 //                .map(Map.Entry::getKey)
 //                .forEach(System.out::println);
 
+
+        /**
+         * Sort words by:
+         * Word length (descending)
+         * If length ties → frequency (descending)
+         * If frequency ties → alphabetical (ascending)
+         * input: "code decode recode codec codex decode code decode coder coder coder"
+         * expected:
+         * decode
+         * recode
+         * coder
+         * codec
+         * codex
+         * code
+         */
+//        String input = "code decode2@ recode! codec codex decode code decode coder coder coder";
+//        String text = input.toLowerCase().replaceAll("[^a-z ]",""); //normalizing the input
+//
+//        Stream.of(text.split(" "))
+//               .collect(Collectors.groupingBy(Function.identity(),
+//                       LinkedHashMap::new,
+//                       Collectors.counting()))
+//               .entrySet().stream()
+//               .sorted(
+//                     Comparator.comparing((Map.Entry<String,Long> e)-> e.getKey().length(),Comparator.reverseOrder())
+//                             .thenComparing(Map.Entry::getValue, Comparator.reverseOrder())
+//                             .thenComparing(Map.Entry::getKey)
+//               )
+//               .map(Map.Entry::getKey)
+//               .forEach(System.out::println);
+
+
         //27-Feb-26
         /**
          * Highest Paid Employee Per Department
@@ -162,45 +195,29 @@ public class ProblemsOfTheDay {
          *   Finance=Employee[name=Eve, dept=Finance, salary=80000]
          * }
          */
-//        record Employee(String name, String dept, int salary) {}
-//        List<Employee> employees = List.of(
-//                new Employee("Alice", "IT", 70000),
-//                new Employee("Bob", "IT", 90000),
-//                new Employee("Charlie", "HR", 60000),
-//                new Employee("David", "HR", 75000),
-//                new Employee("Eve", "Finance", 80000)
-//        );
+        record Employee(String name, String dept, int salary) {}
+        List<Employee> employees = List.of(
+                new Employee("Alice", "IT", 70000),
+                new Employee("Bob", "IT", 90000),
+                new Employee("Charlie", "HR", 60000),
+                new Employee("David", "HR", 75000),
+                new Employee("Eve", "Finance", 80000)
+        );
+//        employees.stream()
+//                .collect(Collectors.groupingBy(Employee::dept,
+//                        Collectors.collectingAndThen(
+//                                Collectors.maxBy(Comparator.comparingInt(Employee::salary)), //maxBy returns Optional, but we need Employee so we do collectingAndThen
+//                                opt -> opt.orElse(null)
+//                        )))
+//                .forEach((k,v)-> System.out.println(k + "=" + v));
 
-
-        /**
-         * Sort words by:
-         * Word length (descending)
-         * If length ties → frequency (descending)
-         * If frequency ties → alphabetical (ascending)
-         * input: "code decode recode codec codex decode code decode coder coder coder"
-         * expected:
-         * decode
-         * recode
-         * coder
-         * codec
-         * codex
-         * code
-         */
-        String input = "code decode2@ recode! codec codex decode code decode coder coder coder";
-        String text = input.toLowerCase().replaceAll("[^a-z ]",""); //normalizing the input
-
-        Stream.of(text.split(" "))
-               .collect(Collectors.groupingBy(Function.identity(),
-                       LinkedHashMap::new,
-                       Collectors.counting()))
-               .entrySet().stream()
-               .sorted(
-                     Comparator.comparing((Map.Entry<String,Long> e)-> e.getKey().length(),Comparator.reverseOrder())
-                             .thenComparing(Map.Entry::getValue, Comparator.reverseOrder())
-                             .thenComparing(Map.Entry::getKey)
-               )
-               .map(Map.Entry::getKey)
-               .forEach(System.out::println);
-
+        //using toMap and BinaryOperator.maxBy as merge function
+        employees.stream()
+                .collect(Collectors.toMap(
+                        Employee::dept,
+                        Function.identity(),
+                        BinaryOperator.maxBy(Comparator.comparingInt(Employee::salary))
+                ))
+                .forEach((k,v)-> System.out.println(k + "=" + v));
     }
 }
