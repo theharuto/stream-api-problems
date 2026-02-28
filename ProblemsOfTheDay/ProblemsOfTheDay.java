@@ -112,7 +112,7 @@ public class ProblemsOfTheDay {
 
 
 
-        String text = "Java is great and Java is powerful. Java streams are great and powerful!";
+//        String text = "Java is great and Java is powerful. Java streams are great and powerful! java";
         /**
          * Using Streams:
          *
@@ -131,17 +131,76 @@ public class ProblemsOfTheDay {
          * expected output
          * ["java", "and", "great"]
          */
-        Stream.of(text.split("\\s+"))
-                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new,Collectors.counting()
-                ))
-                .entrySet().stream()
-                .sorted(Map.Entry.<String,Long>comparingByValue(Comparator.reverseOrder()).thenComparing(Map.Entry::getKey))
-                .limit(3)
-                .map(Map.Entry::getKey)
-                .forEach(System.out::println);
+//        String test = text.toLowerCase()
+//                .replaceAll("[^a-z ]", "");
+//
+//        Stream.of(test.split("\\s+"))
+//                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new,Collectors.counting()
+//                ))
+//                .entrySet().stream()
+//                .sorted(Map.Entry.<String,Long>comparingByValue(Comparator.reverseOrder()).thenComparing(Map.Entry::getKey))
+//                .limit(3)
+//                .map(Map.Entry::getKey)
+//                .forEach(System.out::println);
+
+        //27-Feb-26
+        /**
+         * Highest Paid Employee Per Department
+         *Using Streams:
+         *
+         * Group employees by department.
+         *
+         * For each department, find the employee with the highest salary.
+         *
+         * Return:
+         *
+         * Map<String, Employee>
+         *
+         *{
+         *   IT=Employee[name=Bob, dept=IT, salary=90000],
+         *   HR=Employee[name=David, dept=HR, salary=75000],
+         *   Finance=Employee[name=Eve, dept=Finance, salary=80000]
+         * }
+         */
+//        record Employee(String name, String dept, int salary) {}
+//        List<Employee> employees = List.of(
+//                new Employee("Alice", "IT", 70000),
+//                new Employee("Bob", "IT", 90000),
+//                new Employee("Charlie", "HR", 60000),
+//                new Employee("David", "HR", 75000),
+//                new Employee("Eve", "Finance", 80000)
+//        );
 
 
+        /**
+         * Sort words by:
+         * Word length (descending)
+         * If length ties → frequency (descending)
+         * If frequency ties → alphabetical (ascending)
+         * input: "code decode recode codec codex decode code decode coder coder coder"
+         * expected:
+         * decode
+         * recode
+         * coder
+         * codec
+         * codex
+         * code
+         */
+        String input = "code decode2@ recode! codec codex decode code decode coder coder coder";
+        String text = input.toLowerCase().replaceAll("[^a-z ]",""); //normalizing the input
 
+        Stream.of(text.split(" "))
+               .collect(Collectors.groupingBy(Function.identity(),
+                       LinkedHashMap::new,
+                       Collectors.counting()))
+               .entrySet().stream()
+               .sorted(
+                     Comparator.comparing((Map.Entry<String,Long> e)-> e.getKey().length(),Comparator.reverseOrder())
+                             .thenComparing(Map.Entry::getValue, Comparator.reverseOrder())
+                             .thenComparing(Map.Entry::getKey)
+               )
+               .map(Map.Entry::getKey)
+               .forEach(System.out::println);
 
     }
 }
