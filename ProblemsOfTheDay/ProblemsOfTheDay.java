@@ -1,11 +1,7 @@
 package ProblemsOfTheDay;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ProblemsOfTheDay {
@@ -195,14 +191,14 @@ public class ProblemsOfTheDay {
          *   Finance=Employee[name=Eve, dept=Finance, salary=80000]
          * }
          */
-        record Employee(String name, String dept, int salary) {}
-        List<Employee> employees = List.of(
-                new Employee("Alice", "IT", 70000),
-                new Employee("Bob", "IT", 90000),
-                new Employee("Charlie", "HR", 60000),
-                new Employee("David", "HR", 75000),
-                new Employee("Eve", "Finance", 80000)
-        );
+//        record Employee(String name, String dept, int salary) {}
+//        List<Employee> employees = List.of(
+//                new Employee("Alice", "IT", 70000),
+//                new Employee("Bob", "IT", 90000),
+//                new Employee("Charlie", "HR", 60000),
+//                new Employee("David", "HR", 75000),
+//                new Employee("Eve", "Finance", 80000)
+//        );
 //        employees.stream()
 //                .collect(Collectors.groupingBy(Employee::dept,
 //                        Collectors.collectingAndThen(
@@ -212,12 +208,48 @@ public class ProblemsOfTheDay {
 //                .forEach((k,v)-> System.out.println(k + "=" + v));
 
         //using toMap and BinaryOperator.maxBy as merge function
-        employees.stream()
-                .collect(Collectors.toMap(
-                        Employee::dept,
-                        Function.identity(),
-                        BinaryOperator.maxBy(Comparator.comparingInt(Employee::salary))
-                ))
-                .forEach((k,v)-> System.out.println(k + "=" + v));
+//        employees.stream()
+//                .collect(Collectors.toMap(
+//                        Employee::dept,
+//                        Function.identity(),
+//                        BinaryOperator.maxBy(Comparator.comparingInt(Employee::salary))
+//                ))
+//                .forEach((k,v)-> System.out.println(k + "=" + v));
+
+
+        //02-Mar-26
+        /**
+         * You are given this input:
+         * "electronics:mobile:500 electronics:laptop:1500 kitchen:knife:200 kitchen:oven:800 electronics:tablet:900"
+         *  Expected Output
+         * For the input above, result should be:
+         * electronics → Product(laptop, 1500)
+         * kitchen     → Product(oven, 800)
+         */
+        record  Product(String item, int price){}
+        String input = "electronics:mobile:500 electronics:laptop:1500 kitchen:knife:200 kitchen:oven:800 electronics:tablet:900";
+        Map<String , List<Product>> categoryAndProductMap =
+
+//                Stream.of(input.split(" "))
+//                .map(s-> s.split(":"))
+//                .collect(Collectors.groupingBy(s-> s[0].toLowerCase(),
+//                        Collectors.collectingAndThen(Collectors.toList(), list-> list.stream()
+//                                .map(s-> new Product(s[1],Integer.parseInt(s[2]))
+//                                )
+//                                .toList())));
+
+
+        // using Collectors.mapping - downstream
+        Stream.of(input.split(" "))
+                .map(s-> s.split(":"))
+                        .collect(Collectors.groupingBy(
+                            arr -> arr[0],
+                                 Collectors.mapping( arr-> new Product(arr[1], Integer.parseInt(arr[2])),
+                                       Collectors.toList()
+
+                        )));
+
+
+        System.out.println(categoryAndProductMap);
     }
 }
