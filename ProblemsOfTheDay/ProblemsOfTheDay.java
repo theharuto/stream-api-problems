@@ -226,9 +226,9 @@ public class ProblemsOfTheDay {
          * electronics → Product(laptop, 1500)
          * kitchen     → Product(oven, 800)
          */
-        record  Product(String item, int price){}
-        String input = "electronics:mobile:500 electronics:laptop:1500 kitchen:knife:200 kitchen:oven:800 electronics:tablet:900";
-        Map<String , List<Product>> categoryAndProductMap =
+//        record  Product(String item, int price){}
+//        String input = "electronics:mobile:500 electronics:laptop:1500 kitchen:knife:200 kitchen:oven:800 electronics:tablet:900";
+//        Map<String , List<Product>> categoryAndProductMap =
 
 //                Stream.of(input.split(" "))
 //                .map(s-> s.split(":"))
@@ -240,16 +240,60 @@ public class ProblemsOfTheDay {
 
 
         // using Collectors.mapping - downstream
-        Stream.of(input.split(" "))
-                .map(s-> s.split(":"))
-                        .collect(Collectors.groupingBy(
-                            arr -> arr[0],
-                                 Collectors.mapping( arr-> new Product(arr[1], Integer.parseInt(arr[2])),
-                                       Collectors.toList()
+//        Stream.of(input.split(" "))
+//                .map(s-> s.split(":"))
+//                        .collect(Collectors.groupingBy(
+//                            arr -> arr[0],
+//                                 Collectors.mapping( arr-> new Product(arr[1], Integer.parseInt(arr[2])),
+//                                       Collectors.toList()
+//
+//                        )));
+//
+//
+//        System.out.println(categoryAndProductMap);
 
-                        )));
 
+        //10-Mar-26
+        /**
+         * Problem 1: Filter and Sort Employees by Salary
+         *
+         * You are given a list of employees. Each employee has:
+         *
+         * name
+         *
+         * department
+         *
+         * salary
+         *
+         * Task
+         *
+         * Using Java Stream API:
+         *
+         * Filter employees with salary > 50,000
+         *
+         * Sort them by salary in descending order
+         *
+         * Return only their names
+         *
+         *expected output
+         * [Karan, Amit, Sneha]
+         *
+         */
 
-        System.out.println(categoryAndProductMap);
+        record Employee(String name, String dept, int salary) {}
+
+        List<Employee> employees = List.of(
+                new Employee("Amit", "IT", 60000),
+                new Employee("Riya", "HR", 45000),
+                new Employee("Karan", "IT", 75000),
+                new Employee("Sneha", "Finance", 52000),
+                new Employee("Arjun", "IT", 48000)
+        );
+
+        employees.stream().filter(u-> u.salary() > 50_000)
+                .sorted(Comparator.comparingInt(Employee::salary).reversed())
+                .map(Employee::name)
+                .forEach(System.out::println);
+
     }
 }
