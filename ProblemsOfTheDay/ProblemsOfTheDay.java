@@ -1,6 +1,7 @@
 package ProblemsOfTheDay;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -280,20 +281,72 @@ public class ProblemsOfTheDay {
          *
          */
 
-        record Employee(String name, String dept, int salary) {}
+//        record Employee(String name, String dept, int salary) {}
+//
+//        List<Employee> employees = List.of(
+//                new Employee("Amit", "IT", 60000),
+//                new Employee("Riya", "HR", 45000),
+//                new Employee("Karan", "IT", 75000),
+//                new Employee("Sneha", "Finance", 52000),
+//                new Employee("Arjun", "IT", 48000)
+//        );
+//
+//        employees.stream().filter(u-> u.salary() > 50_000)
+//                .sorted(Comparator.comparingInt(Employee::salary).reversed())
+//                .map(Employee::name)
+//                .forEach(System.out::println);
 
-        List<Employee> employees = List.of(
-                new Employee("Amit", "IT", 60000),
-                new Employee("Riya", "HR", 45000),
-                new Employee("Karan", "IT", 75000),
-                new Employee("Sneha", "Finance", 52000),
-                new Employee("Arjun", "IT", 48000)
+
+        /**
+         * Problem: Most Frequent Word in Sentences
+         *
+         * You are given a list of sentences. Each sentence may contain multiple words separated by spaces.
+         *
+         * Task
+         *
+         * Using Java Stream API:
+         *
+         * Split all sentences into individual words.
+         *
+         * Convert all words to lowercase.
+         *
+         * Ignore punctuation (. , ! ?).
+         *
+         * Count the frequency of each word.
+         *
+         * Return the top 3 most frequent words sorted by frequency (descending).
+         *
+         * expected output :
+         * [java=3, streams=2, powerful=3]
+         */
+        List<String> sentences = List.of(
+                "Java! streams are powerful",
+                "Streams make? Java powerful",
+                "Java streams simplify code",
+                "Powerful code comes from practice"
         );
 
-        employees.stream().filter(u-> u.salary() > 50_000)
-                .sorted(Comparator.comparingInt(Employee::salary).reversed())
-                .map(Employee::name)
-                .forEach(System.out::println);
+       Map<String, Long> highFreqString =
+               sentences.stream()
+                .flatMap(
+                        sentence -> Stream.of(
+                                sentence.toLowerCase().replaceAll("[^a-z ]","").split(" ")
+                        )
+                )
+                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.<String,Long>comparingByValue().reversed())
+                .limit(3)
+               .collect(Collectors.toMap(  //here we get the entry from the entry set not the map
+                       e-> e.getKey(),
+                       e-> e.getValue(),
+                       (e1,e2)-> e1
+
+               ));
+
+//               .forEach((k) -> System.out.println(k.getKey() + " " + k.getValue()));
+        System.out.println(highFreqString);
 
     }
 }
