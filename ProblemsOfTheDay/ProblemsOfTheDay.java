@@ -319,34 +319,89 @@ public class ProblemsOfTheDay {
          * expected output :
          * [java=3, streams=2, powerful=3]
          */
-        List<String> sentences = List.of(
-                "Java! streams are powerful",
-                "Streams make? Java powerful",
-                "Java streams simplify code",
-                "Powerful code comes from practice"
+//        List<String> sentences = List.of(
+//                "Java! streams are powerful",
+//                "Streams make? Java powerful",
+//                "Java streams simplify code",
+//                "Powerful code comes from practice"
+//        );
+//
+//       Map<String, Long> highFreqString =
+//               sentences.stream()
+//                .flatMap(
+//                        sentence -> Stream.of(
+//                                sentence.toLowerCase().replaceAll("[^a-z ]","").split(" ") //normalizing
+//                        )
+//                )
+//                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new, Collectors.counting()))
+//                .entrySet()
+//                .stream()
+//                .sorted(Map.Entry.<String,Long>comparingByValue().reversed())
+//                .limit(3)
+//               .collect(Collectors.toMap(  //here we get the entry from the entry set not the map
+//                       e-> e.getKey(),
+//                       e-> e.getValue(),
+//                       (e1,e2)-> e1
+//
+//               ));
+//
+////               .forEach((k) -> System.out.println(k.getKey() + " " + k.getValue()));
+//        System.out.println(highFreqString);
+
+
+        //11-Mar-26
+        /**
+         * Problem 1: Department Wise Highest Paid Employee
+         * Task
+         *
+         * Using Java Streams:
+         *
+         * Group employees by department
+         *
+         * For each department find the employee with the highest salary
+         *
+         * Return result as:
+         *
+         * Map<String, Employee>
+         * Expected Output
+         * {
+         * IT=Employee{name='Karan', salary=75000},
+         * HR=Employee{name='Riya', salary=45000},
+         * Finance=Employee{name='Meera', salary=80000}
+         * }
+         * Concepts Tested
+         *
+         * groupingBy
+         *
+         * maxBy
+         *
+         * Optional handling
+         *
+         * collectingAndThen
+         */
+
+        record Employee (
+            String name,
+            String department,
+            int salary
+        ){}
+        List<Employee> employees = List.of(
+                new Employee("Amit", "IT", 60000),
+                new Employee("Riya", "HR", 45000),
+                new Employee("Karan", "IT", 75000),
+                new Employee("Sneha", "Finance", 52000),
+                new Employee("Arjun", "IT", 48000),
+                new Employee("Meera", "Finance", 80000)
         );
 
-       Map<String, Long> highFreqString =
-               sentences.stream()
-                .flatMap(
-                        sentence -> Stream.of(
-                                sentence.toLowerCase().replaceAll("[^a-z ]","").split(" ")
-                        )
-                )
-                .collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .sorted(Map.Entry.<String,Long>comparingByValue().reversed())
-                .limit(3)
-               .collect(Collectors.toMap(  //here we get the entry from the entry set not the map
-                       e-> e.getKey(),
-                       e-> e.getValue(),
-                       (e1,e2)-> e1
+        Map<String, Employee> highestPaidEmployeePerDept =
+                employees.stream()
+                        .collect(Collectors.groupingBy(Employee::department,
+//                                Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Employee::salary, Comparator.reverseOrder())), //it is already maxBy so didn't have to reverseOrder()
+                                Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Employee::salary)),
+                                        opt-> opt.orElse(null)))) //maxBy returns Optional but we need Employee so we use collectingAndThen
+                        ;
 
-               ));
-
-//               .forEach((k) -> System.out.println(k.getKey() + " " + k.getValue()));
-        System.out.println(highFreqString);
-
+        System.out.println(highestPaidEmployeePerDept);
     }
 }
