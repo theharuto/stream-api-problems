@@ -380,28 +380,99 @@ public class ProblemsOfTheDay {
          * collectingAndThen
          */
 
-        record Employee (
-            String name,
-            String department,
-            int salary
-        ){}
-        List<Employee> employees = List.of(
-                new Employee("Amit", "IT", 60000),
-                new Employee("Riya", "HR", 45000),
-                new Employee("Karan", "IT", 75000),
-                new Employee("Sneha", "Finance", 52000),
-                new Employee("Arjun", "IT", 48000),
-                new Employee("Meera", "Finance", 80000)
+//        record Employee (
+//            String name,
+//            String department,
+//            int salary
+//        ){}
+//        List<Employee> employees = List.of(
+//                new Employee("Amit", "IT", 60000),
+//                new Employee("Riya", "HR", 45000),
+//                new Employee("Karan", "IT", 75000),
+//                new Employee("Sneha", "Finance", 52000),
+//                new Employee("Arjun", "IT", 48000),
+//                new Employee("Meera", "Finance", 80000)
+//        );
+//
+//        Map<String, Employee> highestPaidEmployeePerDept =
+//                employees.stream()
+//                        .collect(Collectors.groupingBy(Employee::department,
+////                                Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Employee::salary, Comparator.reverseOrder())), //it is already maxBy so didn't have to reverseOrder()
+//                                Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Employee::salary)),
+//                                        opt-> opt.orElse(null)))) //maxBy returns Optional but we need Employee so we use collectingAndThen
+//                        ;
+//
+//        System.out.println(highestPaidEmployeePerDept);
+
+
+        /**
+         * Problem 2: Top 3 Most Expensive Products Per Category
+         *Task
+         *
+         * Using Java Streams:
+         *
+         * Group products by category
+         *
+         * For each category sort by price descending
+         *
+         * Take top 2 most expensive products
+         *
+         * Return:
+         *
+         * Map<String, List<Product>>
+         * Expected Output
+         * {
+         * Electronics=[Laptop, Phone],
+         * Furniture=[Bed, Sofa]
+         * }
+         *
+         *
+         * 💡 Extra challenge (optional):
+         * For problem 2, modify the solution so the result becomes:
+         *
+         * Map<String, List<String>>
+         *
+         * (where each category stores product names only).
+         */
+        record Product(String name, String category, int price){}
+        List<Product> products = List.of(
+                new Product("Laptop", "Electronics", 90000),
+                new Product("Phone", "Electronics", 60000),
+                new Product("Tablet", "Electronics", 40000),
+                new Product("Headphones", "Electronics", 5000),
+                new Product("Sofa", "Furniture", 30000),
+                new Product("Chair", "Furniture", 7000),
+                new Product("Table", "Furniture", 15000),
+                new Product("Bed", "Furniture", 50000)
         );
 
-        Map<String, Employee> highestPaidEmployeePerDept =
-                employees.stream()
-                        .collect(Collectors.groupingBy(Employee::department,
-//                                Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Employee::salary, Comparator.reverseOrder())), //it is already maxBy so didn't have to reverseOrder()
-                                Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(Employee::salary)),
-                                        opt-> opt.orElse(null)))) //maxBy returns Optional but we need Employee so we use collectingAndThen
-                        ;
+        Map<String, List<Product>> top2ProductPerCategory =
+                products.stream()
+                        .collect(Collectors.groupingBy(Product::category,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        list -> list.stream()
+                                                .sorted(Comparator.comparingInt(Product::price).reversed())
+                                                .limit(2)
+                                                .toList()
+                                )));
+        System.out.println(top2ProductPerCategory);
 
-        System.out.println(highestPaidEmployeePerDept);
+        Map<String, List<String>> top2ProductNamesPerCategory =
+                products.stream()
+                        .collect(Collectors.groupingBy(Product::category,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        list -> list.stream()
+                                                .sorted(Comparator.comparingInt(Product::price).reversed())
+                                                .limit(2)
+                                                .map(Product::name) //one line addition
+                                                .toList()
+                                )));
+        System.out.println(top2ProductNamesPerCategory);
+
+
+
+
     }
 }
