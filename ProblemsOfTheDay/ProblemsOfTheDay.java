@@ -2,6 +2,7 @@ package ProblemsOfTheDay;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -434,45 +435,204 @@ public class ProblemsOfTheDay {
          *
          * (where each category stores product names only).
          */
-        record Product(String name, String category, int price){}
-        List<Product> products = List.of(
-                new Product("Laptop", "Electronics", 90000),
-                new Product("Phone", "Electronics", 60000),
-                new Product("Tablet", "Electronics", 40000),
-                new Product("Headphones", "Electronics", 5000),
-                new Product("Sofa", "Furniture", 30000),
-                new Product("Chair", "Furniture", 7000),
-                new Product("Table", "Furniture", 15000),
-                new Product("Bed", "Furniture", 50000)
+//        record Product(String name, String category, int price){}
+//        List<Product> products = List.of(
+//                new Product("Laptop", "Electronics", 90000),
+//                new Product("Phone", "Electronics", 60000),
+//                new Product("Tablet", "Electronics", 40000),
+//                new Product("Headphones", "Electronics", 5000),
+//                new Product("Sofa", "Furniture", 30000),
+//                new Product("Chair", "Furniture", 7000),
+//                new Product("Table", "Furniture", 15000),
+//                new Product("Bed", "Furniture", 50000)
+//        );
+//
+//        Map<String, List<Product>> top2ProductPerCategory =
+//                products.stream()
+//                        .collect(Collectors.groupingBy(Product::category,
+//                                Collectors.collectingAndThen(
+//                                        Collectors.toList(),
+//                                        list -> list.stream()
+//                                                .sorted(Comparator.comparingInt(Product::price).reversed())
+//                                                .limit(2)
+//                                                .toList()
+//                                )));
+//        System.out.println(top2ProductPerCategory);
+//
+//        Map<String, List<String>> top2ProductNamesPerCategory =
+//                products.stream()
+//                        .collect(Collectors.groupingBy(Product::category,
+//                                Collectors.collectingAndThen(
+//                                        Collectors.toList(),
+//                                        list -> list.stream()
+//                                                .sorted(Comparator.comparingInt(Product::price).reversed())
+//                                                .limit(2)
+//                                                .map(Product::name) //one line addition
+//                                                .toList()
+//                                )));
+//        System.out.println(top2ProductNamesPerCategory);
+
+
+        //12-Mar-26
+
+        /**
+         * Problem 1: Average Salary per Department per City
+         *Task
+         *
+         * Using Streams:
+         *
+         * Group employees by city
+         *
+         * Inside each city group by department
+         *
+         * Compute average salary
+         *
+         * Expected Output
+         * {
+         * Delhi={IT=54000.0, HR=45000.0},
+         * Mumbai={IT=75000.0, Finance=66000.0}
+         * }
+         *
+         * Return Type
+         * Map<String, Map<String, Double>>
+         *
+         *
+         * Concepts Tested
+         *
+         * Multi-level grouping
+         *
+         * groupingBy
+         *
+         * averagingInt
+         *
+         * nested collectors
+         */
+        record Employee (
+            String name,
+            String department,
+            String city,
+            int salary){}
+        List<Employee> employees = List.of(
+                new Employee("Amit", "IT", "Delhi", 60000),
+                new Employee("Riya", "HR", "Delhi", 45000),
+                new Employee("Karan", "IT", "Mumbai", 75000),
+                new Employee("Sneha", "Finance", "Mumbai", 52000),
+                new Employee("Arjun", "IT", "Delhi", 48000),
+                new Employee("Meera", "Finance", "Mumbai", 80000)
         );
 
-        Map<String, List<Product>> top2ProductPerCategory =
-                products.stream()
-                        .collect(Collectors.groupingBy(Product::category,
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(),
-                                        list -> list.stream()
-                                                .sorted(Comparator.comparingInt(Product::price).reversed())
-                                                .limit(2)
-                                                .toList()
-                                )));
-        System.out.println(top2ProductPerCategory);
+        Map<String, Map<String, Double>> averageSalaryPerDeptPerCity =
+            employees.stream()
+                    .collect(Collectors.groupingBy(
+                            Employee::city,
+                            Collectors.groupingBy(Employee::department,
+                                            Collectors.averagingInt(Employee::salary))
+                    ));
 
-        Map<String, List<String>> top2ProductNamesPerCategory =
-                products.stream()
-                        .collect(Collectors.groupingBy(Product::category,
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(),
-                                        list -> list.stream()
-                                                .sorted(Comparator.comparingInt(Product::price).reversed())
-                                                .limit(2)
-                                                .map(Product::name) //one line addition
-                                                .toList()
-                                )));
-        System.out.println(top2ProductNamesPerCategory);
+        System.out.println(averageSalaryPerDeptPerCity);
+
+        /**
+         * Problem 2: Flatten Orders and Find Top Customer
+         *Task
+         *
+         * Using Streams:
+         *
+         * Flatten all orders
+         *
+         * Compute total spending per customer
+         *
+         * Find the customer who spent the most
+         *
+         * Expected Output
+         * Alice -> 92000
+         * Concepts Tested
+         *
+         * flatMap
+         *
+         * groupingBy
+         *
+         * summingInt
+         *
+         * max
+         *
+         * Map.Entry
+         *
+         * Bonus Challenge (Harder Stream Problem)
+         *
+         * Find the top 2 customers by total spending.
+         *
+         * Expected Output:
+         *
+         * [Alice=92000, Bob=65000]
+         */
+
+        class Order {
+            String product;
+            int amount;
+
+            public Order(String product, int amount) {
+                this.product = product;
+                this.amount = amount;
+            }
+
+            public String getProduct() {
+                return product;
+            }
+
+            public void setProduct(String product) {
+                this.product = product;
+            }
+
+            public int getAmount() {
+                return amount;
+            }
+
+            public void setAmount(int amount) {
+                this.amount = amount;
+            }
+        }
 
 
+        class Customer {
+            String name;
+            List<Order> orders;
 
+            public Customer(String name, List<Order> orders) {
+                this.name = name;
+                this.orders = orders;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public List<Order> getOrders() {
+                return orders;
+            }
+
+            public void setOrders(List<Order> orders) {
+                this.orders = orders;
+            }
+        }
+
+        List<Customer> customers = List.of(
+                new Customer("Alice", List.of(
+                        new Order("Laptop", 90000),
+                        new Order("Mouse", 2000)
+                )),
+                new Customer("Bob", List.of(
+                        new Order("Phone", 60000),
+                        new Order("Headphones", 5000)
+                )),
+                new Customer("Charlie", List.of(
+                        new Order("Tablet", 40000),
+                        new Order("Keyboard", 3000)
+                ))
+        );
 
     }
 }
