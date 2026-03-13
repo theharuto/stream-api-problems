@@ -507,29 +507,29 @@ public class ProblemsOfTheDay {
          *
          * nested collectors
          */
-        record Employee (
-            String name,
-            String department,
-            String city,
-            int salary){}
-        List<Employee> employees = List.of(
-                new Employee("Amit", "IT", "Delhi", 60000),
-                new Employee("Riya", "HR", "Delhi", 45000),
-                new Employee("Karan", "IT", "Mumbai", 75000),
-                new Employee("Sneha", "Finance", "Mumbai", 52000),
-                new Employee("Arjun", "IT", "Delhi", 48000),
-                new Employee("Meera", "Finance", "Mumbai", 80000)
-        );
-
-        Map<String, Map<String, Double>> averageSalaryPerDeptPerCity =
-            employees.stream()
-                    .collect(Collectors.groupingBy(
-                            Employee::city,
-                            Collectors.groupingBy(Employee::department,
-                                            Collectors.averagingInt(Employee::salary))
-                    ));
-
-        System.out.println(averageSalaryPerDeptPerCity);
+//        record Employee (
+//            String name,
+//            String department,
+//            String city,
+//            int salary){}
+//        List<Employee> employees = List.of(
+//                new Employee("Amit", "IT", "Delhi", 60000),
+//                new Employee("Riya", "HR", "Delhi", 45000),
+//                new Employee("Karan", "IT", "Mumbai", 75000),
+//                new Employee("Sneha", "Finance", "Mumbai", 52000),
+//                new Employee("Arjun", "IT", "Delhi", 48000),
+//                new Employee("Meera", "Finance", "Mumbai", 80000)
+//        );
+//
+//        Map<String, Map<String, Double>> averageSalaryPerDeptPerCity =
+//            employees.stream()
+//                    .collect(Collectors.groupingBy(
+//                            Employee::city,
+//                            Collectors.groupingBy(Employee::department,
+//                                            Collectors.averagingInt(Employee::salary))
+//                    ));
+//
+//        System.out.println(averageSalaryPerDeptPerCity);
 
         /**
          * Problem 2: Flatten Orders and Find Top Customer
@@ -634,5 +634,21 @@ public class ProblemsOfTheDay {
                 ))
         );
 
+       Map<String, Integer> customerWithHighSpends =
+               //approach 1 using flatMapping
+//               customers.stream().collect(Collectors.groupingBy(
+//                        Customer::getName,
+//                        Collectors.flatMapping(c-> c.orders.stream(),
+//                                Collectors.summingInt(Order::getAmount))
+//                ));
+                //approach 2 using mapping
+               customers.stream()
+                       .collect(Collectors.groupingBy(
+                               Customer::getName,
+                               Collectors.mapping(c-> c.orders.stream(),
+                                       Collectors.<Stream<Order>>summingInt(stream-> stream.collect(Collectors.summingInt(Order::getAmount))))
+                       ));
+
+        System.out.println(customerWithHighSpends);
     }
 }
