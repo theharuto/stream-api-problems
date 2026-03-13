@@ -649,6 +649,53 @@ public class ProblemsOfTheDay {
                                        Collectors.<Stream<Order>>summingInt(stream-> stream.collect(Collectors.summingInt(Order::getAmount))))
                        ));
 
-        System.out.println(customerWithHighSpends);
+//        System.out.println(customerWithHighSpends);
+
+
+        //13-Mar-26
+        /**
+         * Nested Grouping + Partition
+         * Input
+         * "Order1:Electronics:1200
+         * Order2:Grocery:200
+         * Order3:Electronics:800
+         * Order4:Grocery:150
+         * Order5:Clothing:600
+         * Order6:Electronics:1500
+         * Order7:Clothing:400"
+         * Steps
+         * Partition orders
+         * price >= 1000 → PREMIUM
+         * price < 1000 → REGULAR
+         * Inside each partition:
+         * Group by category
+         * Calculate total revenue
+         * Expected
+         * PREMIUM
+         * Electronics → 2700
+         * REGULAR
+         * Electronics → 800
+         * Grocery → 350
+         * Clothing → 1000
+         *
+         */
+        String orders = "Order1:Electronics:1200 Order2:Grocery:200 Order3:Electronics:800 Order4:Grocery:150 Order5:Clothing:600 Order6:Electronics:1500 Order7:Clothing:400";
+
+        // String order = orders.replaceAll("\\bOrder[1-9]:\\b", "");
+        // System.out.println(order);
+
+        Map<String, Map<String,Integer>> userCategoryTotal=  Stream.of(orders
+                        .replaceAll("\\bOrder[1-9]:\\b", "")
+                        .split("\\s+")
+
+                )
+                //try map to array here
+                .collect(Collectors.groupingBy(
+                        o-> Integer.parseInt(o.split(":")[1]) >= 1000? "PREMIUM" : "REGULAR",
+                        Collectors.groupingBy(o->o.split(":")[0],
+                                Collectors.summingInt(o->Integer.parseInt(o.split(":")[1]))
+                        )
+                ));
+        System.out.println(userCategoryTotal);
     }
 }
